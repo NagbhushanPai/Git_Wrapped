@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Git Wrapped" description="Enter a public GitHub username and get a shareable coding profile page.">
+	<main class="flex min-h-screen items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
+		<div class="w-full max-w-2xl rounded-[2rem] border border-white/10 bg-slate-950/80 p-8 shadow-2xl shadow-black/30 backdrop-blur md:p-12">
+			<p class="text-sm uppercase tracking-[0.35em] text-amber-300/80">Git Wrapped</p>
+			<h1 class="mt-4 text-5xl font-black tracking-tight text-white md:text-7xl">Git Wrapped</h1>
+			<p class="mt-4 max-w-xl text-lg leading-8 text-slate-300">Turn any public GitHub username into a shareable profile card with live stats and a rule-based persona tag.</p>
+
+			<form class="mt-8 flex flex-col gap-3 sm:flex-row" action="/u/" method="get" id="username-form">
+				<input name="username" id="username-input" required autocomplete="username" placeholder="octocat" class="min-w-0 flex-1 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-lg text-white placeholder:text-slate-500 outline-none ring-0 transition focus:border-amber-400/50 focus:bg-white/8" />
+				<button type="submit" class="rounded-2xl bg-amber-400 px-6 py-4 text-lg font-bold text-slate-950 transition hover:bg-amber-300">Generate DNA</button>
+			</form>
+			<p class="mt-4 text-sm text-slate-500">One request, one shareable page, live from the GitHub API.</p>
+		</div>
+	</main>
+
+	<script is:inline>
+		const form = document.getElementById('username-form');
+		const input = document.getElementById('username-input');
+		form?.addEventListener('submit', (event) => {
+			event.preventDefault();
+			const value = input?.value.trim();
+			if (value) window.location.assign(`/u/${encodeURIComponent(value)}`);
+		});
+	</script>
+</Layout>
