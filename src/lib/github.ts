@@ -4,8 +4,16 @@ export type GitHubProfile = {
 	bio: string | null;
 	publicRepos: number;
 	followers: number;
+	following: number;
+	accountAgeYears: number;
+	githubSince: string;
 	stars: number;
+	contributionScore: number;
+	topRepositories: Array<{ name: string; stars: number; url: string }>;
 	languages: Array<{ name: string; count: number; percentage: number }>;
+	activityHeatmap: Array<{ date: string; count: number }>;
+	collaborationStyle: string;
+	mostProductiveWeekday: string | null;
 	topLanguage: { name: string; percentage: number } | null;
 	longestStreak: number;
 	mostActiveHour: number | null;
@@ -24,9 +32,13 @@ type GitHubUser = {
 	bio: string | null;
 	public_repos: number;
 	followers: number;
+	following: number;
+	created_at: string;
 };
 
 type GitHubRepo = {
+	name: string;
+	html_url: string;
 	stargazers_count: number;
 	language: string | null;
 };
@@ -172,6 +184,7 @@ export async function getGitHubProfile(username: string): Promise<GitHubResult> 
 
 		const { languages } = countLanguagePercentages(reposResult.data);
 		const totalStars = reposResult.data.reduce((sum, repo) => sum + repo.stargazers_count, 0);
+		const topRepositories = [...reposResult.data].sort((a, b) => b.stargazers_count - a.stargazers_count).slice(0, 3).map((repo) => ({ name: repo.name, stars: repo.stargazers_count, url: repo.html_url }));
 		const topLanguage = languages[0] ?? null;
 
 		// Approximate: the public events API only exposes a recent slice of activity, not a full commit history.
@@ -182,6 +195,18 @@ export async function getGitHubProfile(username: string): Promise<GitHubResult> 
 			const day = new Date(event.created_at).getUTCDay();
 			return day === 0 || day === 6;
 		}).length;
+		const weekdayCounts = new Map<string, number>();
+		const heatmapCounts = new Map<string, number>();
+		for (const event of pushEvents) {
+			const date = event.created_at.slice(0, 10);
+			heatmapCounts.set(date, (heatmapCounts.get(date) ?? 0) + 1);
+			const weekday = new Date(event.created_at).toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' });
+			weekdayCounts.set(weekday, (weekdayCounts.get(weekday) ?? 0) + 1);
+		}
+		const mostProductiveWeekday = [...weekdayCounts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+		const accountAgeYears = Math.max(0, Math.floor((Date.now() - Date.parse(userResult.data.created_at)) / (365.25 * 86_400_000)));
+		const contributionScore = Math.min(100, Math.round(pushEvents.length * 0.7 + Math.min(totalStars, 500) * 0.04 + Math.min(userResult.data.followers, 1000) * 0.01));
+		const collaborationStyle = eventsResult.data.some((event) => ['PullRequestEvent', 'PullRequestReviewEvent', 'IssuesEvent'].includes(event.type)) ? 'Community collaborator' : pushEvents.length > 20 ? 'Focused shipper' : 'Independent builder';
 
 		return {
 			ok: true,
@@ -191,8 +216,16 @@ export async function getGitHubProfile(username: string): Promise<GitHubResult> 
 				bio: userResult.data.bio,
 				publicRepos: userResult.data.public_repos,
 				followers: userResult.data.followers,
+				following: userResult.data.following,
+				accountAgeYears,
+				githubSince: new Date(userResult.data.created_at).getUTCFullYear().toString(),
 				stars: totalStars,
+				contributionScore,
+				topRepositories,
 				languages,
+				activityHeatmap: [...heatmapCounts.entries()].map(([date, count]) => ({ date, count })),
+				collaborationStyle,
+				mostProductiveWeekday,
 				topLanguage: topLanguage ? { name: topLanguage.name, percentage: topLanguage.percentage } : null,
 				longestStreak: getLongestStreak(pushDates),
 				mostActiveHour: getMostActiveHour(pushHours),

@@ -57,6 +57,9 @@ const isSparseProfile = result.ok && result.profile.stars === 0 && result.profil
 					) : null}
 
 					<div class="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+						<div class="stat-card rounded-3xl border border-amber-300/20 bg-amber-400/10 p-5">
+							<p class="text-sm text-amber-100/70">Contribution score</p><p class="mt-2 text-3xl font-black text-white"><AnimatedCounter client:load target={result.profile.contributionScore} suffix="/100" /></p>
+						</div>
 						<div class="stat-card rounded-3xl border border-white/10 bg-white/5 p-5">
 							<p class="text-sm text-slate-400">Public repos</p>
 							<p class="mt-2 text-3xl font-black text-white"><AnimatedCounter client:load target={result.profile.publicRepos} /></p>
@@ -76,6 +79,24 @@ const isSparseProfile = result.ok && result.profile.stars === 0 && result.profil
 							<p class="mt-1 text-xs text-slate-500">based on last {result.profile.responseWindowDays} days of public activity</p>
 						</div>
 					</div>
+				</div>
+
+				<div class="grid gap-6 lg:grid-cols-2">
+					<div class="rounded-[2rem] border border-white/10 bg-slate-950/70 p-6 md:p-8">
+						<p class="text-sm uppercase tracking-[0.35em] text-amber-300/80">Your GitHub story</p>
+						<h2 class="mt-2 text-2xl font-bold text-white">{result.profile.collaborationStyle}</h2>
+						<p class="mt-3 leading-7 text-slate-300">You have been building on GitHub since <strong class="text-white">{result.profile.githubSince}</strong>, with {result.profile.accountAgeYears} {result.profile.accountAgeYears === 1 ? 'year' : 'years'} of public history. {result.profile.mostProductiveWeekday ? `Your most productive day is ${result.profile.mostProductiveWeekday}` : 'Your activity is still taking shape'}{result.profile.mostActiveHour !== null ? ` around ${result.profile.mostActiveHour}:00 UTC.` : '.'}</p>
+						<div class="mt-5 flex flex-wrap gap-2 text-sm text-slate-300"><span class="rounded-full border border-white/10 bg-white/5 px-3 py-2">{result.profile.followers} followers</span><span class="rounded-full border border-white/10 bg-white/5 px-3 py-2">{result.profile.following} following</span><span class="rounded-full border border-white/10 bg-white/5 px-3 py-2">{result.profile.weekendPushRatio > .4 ? 'Weekend builder' : 'Weekday builder'}</span></div>
+					</div>
+					<div class="rounded-[2rem] border border-white/10 bg-slate-950/70 p-6 md:p-8">
+						<p class="text-sm uppercase tracking-[0.35em] text-amber-300/80">Activity heatmap</p>
+						<div class="mt-5 grid grid-cols-13 gap-1.5">{Array.from({ length: 91 }).map((_, index) => { const date = new Date(Date.now() - (90 - index) * 86400000).toISOString().slice(0, 10); const count = result.profile.activityHeatmap.find((day) => day.date === date)?.count ?? 0; return <span title={`${date}: ${count} pushes`} class={`aspect-square rounded-sm ${count === 0 ? 'bg-white/5' : count < 2 ? 'bg-amber-400/30' : count < 4 ? 'bg-amber-400/60' : 'bg-amber-300'}`}></span>; })}</div>
+					</div>
+				</div>
+
+				<div class="rounded-[2rem] border border-white/10 bg-white/5 p-6 md:p-8">
+					<div class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-sm uppercase tracking-[0.35em] text-amber-300/80">Top repositories</p><h2 class="mt-2 text-2xl font-bold text-white">Where your stars gather</h2></div><p class="text-sm text-slate-400">Favorite language: {result.profile.topLanguage?.name ?? 'Still emerging'}</p></div>
+					<div class="mt-5 grid gap-3 md:grid-cols-3">{result.profile.topRepositories.map((repo) => <a href={repo.url} target="_blank" rel="noreferrer" class="rounded-2xl border border-white/10 bg-slate-950/50 p-4 transition hover:-translate-y-1 hover:border-amber-300/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"><p class="truncate font-bold text-white">{repo.name}</p><p class="mt-2 text-sm text-amber-200">★ {repo.stars} stars</p></a>)}</div>
 				</div>
 
 				<div class="grid gap-6 xl:grid-cols-[1.3fr_0.7fr]">
