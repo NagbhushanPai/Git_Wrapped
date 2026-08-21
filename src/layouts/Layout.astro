@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 
 const { title = 'Git Wrapped', description = 'Turn any public GitHub profile into a shareable coding profile card.' } = Astro.props;
 ---
@@ -12,6 +13,7 @@ const { title = 'Git Wrapped', description = 'Turn any public GitHub profile int
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<ClientRouter fallback="animate" />
 		<slot name="head" />
 	</head>
 	<body class="min-h-full antialiased">

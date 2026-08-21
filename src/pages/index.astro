@@ -1,29 +1,42 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import LoadingSkeleton from '../components/LoadingSkeleton.astro';
 ---
 
 <Layout title="Git Wrapped" description="Enter a public GitHub username and get a shareable coding profile page.">
-	<main class="flex min-h-screen items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
-		<div class="w-full max-w-2xl rounded-[2rem] border border-white/10 bg-slate-950/80 p-8 shadow-2xl shadow-black/30 backdrop-blur md:p-12">
+	<main class="relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10 sm:px-6 lg:px-8">
+		<div class="pointer-events-none absolute left-1/2 top-1/2 h-[32rem] w-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400/10 blur-3xl"></div>
+		<div id="landing-card" class="relative w-full max-w-2xl rounded-[2rem] border border-white/10 bg-slate-950/80 p-8 shadow-2xl shadow-black/30 backdrop-blur md:p-12">
 			<p class="text-sm uppercase tracking-[0.35em] text-amber-300/80">Git Wrapped</p>
 			<h1 class="mt-4 text-5xl font-black tracking-tight text-white md:text-7xl">Git Wrapped</h1>
 			<p class="mt-4 max-w-xl text-lg leading-8 text-slate-300">Turn any public GitHub username into a shareable profile card with live stats and a rule-based persona tag.</p>
 
 			<form class="mt-8 flex flex-col gap-3 sm:flex-row" action="/u/" method="get" id="username-form">
-				<input name="username" id="username-input" required autocomplete="username" placeholder="octocat" class="min-w-0 flex-1 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-lg text-white placeholder:text-slate-500 outline-none ring-0 transition focus:border-amber-400/50 focus:bg-white/8" />
-				<button type="submit" class="rounded-2xl bg-amber-400 px-6 py-4 text-lg font-bold text-slate-950 transition hover:bg-amber-300">Generate DNA</button>
+				<input name="username" id="username-input" required autocomplete="username" placeholder="octocat" class="min-w-0 flex-1 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-lg text-white placeholder:text-slate-500 outline-none ring-0 transition focus:border-amber-400/50 focus:bg-white/8 focus-visible:ring-2 focus-visible:ring-amber-300" />
+				<button type="submit" class="rounded-2xl bg-amber-400 px-6 py-4 text-lg font-bold text-slate-950 transition hover:-translate-y-0.5 hover:bg-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">Wrap my profile</button>
 			</form>
+			<div class="mt-5 flex flex-wrap items-center gap-2 text-sm text-slate-500"><span>Try:</span>{['torvalds', 'gaearon', 'octocat'].map((example) => <button type="button" class="example-user rounded-full border border-white/10 px-3 py-1 text-slate-300 transition hover:border-amber-300/50 hover:text-amber-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300" data-username={example}>{example}</button>)}</div>
 			<p class="mt-4 text-sm text-slate-500">One request, one shareable page, live from the GitHub API.</p>
 		</div>
+		<div id="loading-skeleton" class="relative hidden w-full"><LoadingSkeleton /></div>
 	</main>
 
 	<script is:inline>
 		const form = document.getElementById('username-form');
 		const input = document.getElementById('username-input');
+		const card = document.getElementById('landing-card');
+		const skeleton = document.getElementById('loading-skeleton');
+		document.querySelectorAll('.example-user').forEach((button) => button.addEventListener('click', () => { input.value = button.dataset.username ?? ''; form?.requestSubmit(); }));
 		form?.addEventListener('submit', (event) => {
 			event.preventDefault();
 			const value = input?.value.trim();
-			if (value) window.location.assign(`/u/${encodeURIComponent(value)}`);
+			if (value) {
+				card?.classList.add('hidden');
+				skeleton?.classList.remove('hidden');
+				requestAnimationFrame(() => {
+					setTimeout(() => window.location.assign(`/u/${encodeURIComponent(value)}`), 60);
+				});
+			}
 		});
 	</script>
 </Layout>
