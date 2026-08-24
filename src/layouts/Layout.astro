@@ -1,24 +1,28 @@
 ---
-import '../styles/global.css';
-import { ClientRouter } from 'astro:transitions';
-import Analytics from '@vercel/analytics/astro';
+import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
+import Analytics from "@vercel/analytics/astro";
 
-const { title = 'Git Wrapped', description = 'Turn any public GitHub profile into a shareable coding profile card.' } = Astro.props;
+const {
+  title = "Git Wrapped",
+  description = "Turn any public GitHub profile into a shareable coding profile card.",
+} = Astro.props;
 ---
+
 <!doctype html>
 <html lang="en" class="h-full bg-slate-950 text-slate-100">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="description" content={description} />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-		<ClientRouter fallback="animate" />
-		<slot name="head" />
-	</head>
-	<body class="min-h-full antialiased">
-		<slot />
-		<Analytics />
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <ClientRouter fallback="animate" />
+    <slot name="head" />
+  </head>
+  <body class="min-h-full antialiased">
+    <slot />
+    <Analytics />
+  </body>
 </html>
