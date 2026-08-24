@@ -187,7 +187,8 @@ export async function getGitHubProfile(username: string): Promise<GitHubResult> 
 		const topRepositories = [...reposResult.data].sort((a, b) => b.stargazers_count - a.stargazers_count).slice(0, 3).map((repo) => ({ name: repo.name, stars: repo.stargazers_count, url: repo.html_url }));
 		const topLanguage = languages[0] ?? null;
 
-		// Approximate: the public events API only exposes a recent slice of activity, not a full commit history.
+		// Approximate: this is push activity, not commit/authored time. The public events API
+		// only exposes a recent slice of activity and PushEvent.created_at is the push time.
 		const pushEvents = eventsResult.data.filter((event) => event.type === 'PushEvent');
 		const pushDates = pushEvents.map((event) => event.created_at.slice(0, 10));
 		const pushHours = pushEvents.map((event) => new Date(event.created_at).getUTCHours());

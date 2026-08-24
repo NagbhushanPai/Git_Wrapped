@@ -85,7 +85,7 @@ const isSparseProfile = result.ok && result.profile.stars === 0 && result.profil
 					<div class="rounded-[2rem] border border-white/10 bg-slate-950/70 p-6 md:p-8">
 						<p class="text-sm uppercase tracking-[0.35em] text-amber-300/80">Your GitHub story</p>
 						<h2 class="mt-2 text-2xl font-bold text-white">{result.profile.collaborationStyle}</h2>
-						<p class="mt-3 leading-7 text-slate-300">You have been building on GitHub since <strong class="text-white">{result.profile.githubSince}</strong>, with {result.profile.accountAgeYears} {result.profile.accountAgeYears === 1 ? 'year' : 'years'} of public history. {result.profile.mostProductiveWeekday ? `Your most productive day is ${result.profile.mostProductiveWeekday}` : 'Your activity is still taking shape'}{result.profile.mostActiveHour !== null ? ` around ${result.profile.mostActiveHour}:00 UTC.` : '.'}</p>
+						<p class="mt-3 leading-7 text-slate-300">You have been building on GitHub since <strong class="text-white">{result.profile.githubSince}</strong>, with {result.profile.accountAgeYears} {result.profile.accountAgeYears === 1 ? 'year' : 'years'} of public history. {result.profile.mostProductiveWeekday ? `Your most productive day is ${result.profile.mostProductiveWeekday}` : 'Your activity is still taking shape'}{result.profile.mostActiveHour !== null ? ` with most pushes around ${result.profile.mostActiveHour}:00 UTC.` : '.'}</p>
 						<div class="mt-5 flex flex-wrap gap-2 text-sm text-slate-300"><span class="rounded-full border border-white/10 bg-white/5 px-3 py-2">{result.profile.followers} followers</span><span class="rounded-full border border-white/10 bg-white/5 px-3 py-2">{result.profile.following} following</span><span class="rounded-full border border-white/10 bg-white/5 px-3 py-2">{result.profile.weekendPushRatio > .4 ? 'Weekend builder' : 'Weekday builder'}</span></div>
 					</div>
 					<div class="rounded-[2rem] border border-white/10 bg-slate-950/70 p-6 md:p-8">
@@ -106,7 +106,7 @@ const isSparseProfile = result.ok && result.profile.stars === 0 && result.profil
 								<p class="text-sm uppercase tracking-[0.35em] text-amber-300/80">Language breakdown</p>
 								<h2 class="mt-2 text-2xl font-bold text-white">Top 5 languages by repo count</h2>
 							</div>
-							{result.profile.mostActiveHour !== null ? <p class="text-sm text-slate-400">Most active hour: {result.profile.mostActiveHour}:00 UTC</p> : <p class="text-sm text-slate-400">Just getting started — no public activity in the last 90 days yet 🌱</p>}
+							{result.profile.mostActiveHour !== null ? <p class="text-sm text-slate-400">Most active push hour: {result.profile.mostActiveHour}:00 UTC</p> : <p class="text-sm text-slate-400">Just getting started — no public activity in the last 90 days yet 🌱</p>}
 						</div>
 						<div class="mt-6">
 							<LanguageChart client:load languages={result.profile.languages.slice(0, 5)} />
