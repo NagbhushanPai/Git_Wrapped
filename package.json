@@ -15,6 +15,7 @@
     "@astrojs/react": "^6.0.4",
     "@astrojs/vercel": "^11.0.7",
     "@tailwindcss/vite": "^4.3.3",
+    "@vercel/analytics": "^2.0.1",
     "@vercel/og": "^1.0.1",
     "astro": "^7.2.4",
     "react": "^19.2.8",
